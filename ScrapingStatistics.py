@@ -3,7 +3,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 import csv
@@ -12,7 +11,8 @@ import os
 base_url = "https://www.euroleaguebasketball.net/tr/euroleague/teams/fenerbahce-beko-istanbul/games/ulk/?season="
 
 # Sadece 2024-25 sezonu için link oluştur
-season = "2016-17"
+season = "2024-25"
+team_name = "Fenerbahce Beko Istanbul"
 link = base_url + season
 print(f"İşlenecek link: {link}")
 
@@ -150,10 +150,10 @@ try:
                 team2 = team2_element.text.strip()
 
                 # Fenerbahçe'nin hangi takım olduğunu kontrol et
-                if "Fenerbahce Istanbul" in team1 or "FENERBAHCE" in team1.upper():
+                if team_name in team1 or "FENERBAHCE" in team1.upper():
                     is_home = 1
                     opposing_team = team2
-                elif "Fenerbahce Istanbul" in team2 or "FENERBAHCE" in team2.upper():
+                elif team_name in team2 or "FENERBAHCE" in team2.upper():
                     is_home = 0
                     opposing_team = team1
                 else:
