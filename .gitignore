@@ -3,3 +3,7 @@
 Dataset
 fenerbahce_beko.csv
 fenerbahce_beko_cleaned.csv
+Texts-CSV
+Texts-JSON
+fenerbahce_beko_news.json
+fenerbahce_beko_news_cleaned.json
