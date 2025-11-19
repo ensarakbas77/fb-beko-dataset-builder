@@ -14,12 +14,7 @@ HEADERS = {
 
 
 def scrape_eurohoops_bs(start_page, end_page, delay=1.0):
-    """
-    Eurohoops Fenerbahçe haberlerini belirtilen sayfa aralığında çeker.
-    start_page: başlanacak sayfa
-    end_page: bitecek sayfa
-    delay: istekler arası bekleme süresi
-    """
+
     all_articles = []
 
     for page in range(start_page, end_page + 1):
@@ -47,7 +42,6 @@ def scrape_eurohoops_bs(start_page, end_page, delay=1.0):
                 title = a_tag.get_text(strip=True)
                 link = a_tag["href"]
 
-                # Haber sayfasını çek
                 try:
                     news_resp = requests.get(link, headers=HEADERS, timeout=15)
                     news_resp.raise_for_status()
@@ -61,7 +55,6 @@ def scrape_eurohoops_bs(start_page, end_page, delay=1.0):
                     print(f"[Haber içeriği bulunamadı: {title}]")
                     continue
 
-                # Metni temizle
                 paragraphs = content_div.find_all(
                     ["p", "h1", "h2", "h3", "h4", "h5", "h6", "li"]
                 )
@@ -69,7 +62,6 @@ def scrape_eurohoops_bs(start_page, end_page, delay=1.0):
                     [p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True)]
                 )
 
-                # Tarih bilgisini çek (selector ile)
                 date_span = news_soup.select_one("span.single__date[itemprop='dateCreated']")
                 date_text = date_span.get_text(strip=True) if date_span else "Tarih bulunamadı"
 
@@ -87,7 +79,6 @@ def scrape_eurohoops_bs(start_page, end_page, delay=1.0):
                 print(f"[Haber işlenemedi: {e}]")
                 continue
 
-        # sayfalar arası bekleme
         time.sleep(delay)
 
     # JSON ve CSV olarak kaydet
@@ -117,4 +108,4 @@ def scrape_eurohoops_bs(start_page, end_page, delay=1.0):
 
 if __name__ == "__main__":
     # start_page ve end_page arasındaki haberleri çek
-    scrape_eurohoops_bs(start_page=901, end_page=1000, delay=1.0)
+    scrape_eurohoops_bs(start_page=1, end_page=1, delay=1.0)

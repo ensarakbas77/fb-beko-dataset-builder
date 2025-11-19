@@ -10,33 +10,29 @@ import os
 
 base_url = "https://www.euroleaguebasketball.net/tr/euroleague/teams/fenerbahce-beko-istanbul/games/ulk/?season="
 
-# Sadece 2024-25 sezonu için link oluştur
+# sezonu için link oluştur
 season = "2024-25"
 team_name = "Fenerbahce Beko Istanbul"
 link = base_url + season
 print(f"İşlenecek link: {link}")
 
-# Chrome ayarlarını yapılandır
 chrome_options = Options()
 
-# WebDriver'ı, webdriver-manager kullanarak başlat
+# webdriver-manager
 service = Service(ChromeDriverManager().install())
 driver = webdriver.Chrome(service=service, options=chrome_options)
 driver.maximize_window()
-
-# WebDriverWait örneği oluştur
 wait = WebDriverWait(driver, 10)
 
-# CSV dosyası için başlıklar
-csv_filename = f"fenerbahce_{season}.csv"
+csv_filename = f"deneme_{season}.csv"
 csv_headers = ["Date", "Opposing Team", "IsHome", "Points", "Performance Index Rating", "Two-point %", "Three-point %", "Free-throw %", "Offensive rebounds", "Defensive rebounds", "Total rebounds", "Assists", "Steals", "Blocks", "Turnovers"]
 
-# CSV dosyasını oluştur ve başlıkları yaz
+# CSV dosyasını oluştur
 with open(csv_filename, 'w', newline='', encoding='utf-8') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(csv_headers)
 
-# İstatistiklerin adları (sıralı)
+# İstatistikler
 statistics_names = [
     "Points",
     "Performance Index Rating",
@@ -53,21 +49,16 @@ statistics_names = [
 ]
 
 def get_statistics_simple(driver, wait_obj, is_home):
-    """Sadeleştirilmiş istatistik çekme fonksiyonu - sadece pozisyon bazlı çekme"""
     statistics = {}
 
     try:
         print(f"İstatistik çekiliyor... (IsHome: {is_home})")
 
-        # Tüm değer elementlerini al
         all_values = driver.find_elements(By.CSS_SELECTOR, 'div.font-bold.lg\\:text-base')
 
-        # Fenerbahçe verilerini pozisyona göre al (home/away)
         if is_home == 1:
-            # Home takım - çift indexler: 0,2,4,6...
             target_indices = list(range(0, len(all_values), 2))
         else:
-            # Away takım - tek indexler: 1,3,5,7...
             target_indices = list(range(1, len(all_values), 2))
 
         # İstatistikleri çek
@@ -101,37 +92,31 @@ def get_statistics_simple(driver, wait_obj, is_home):
     return statistics
 
 try:
-    # Sayfaya git
     driver.get(link)
-    time.sleep(15)  # Sayfanın yüklenmesi için bekle
+    time.sleep(15)
 
     # Maç linklerini bul
     articles = driver.find_elements(By.CSS_SELECTOR, 'article.relative.text-base.text-primary.font-normal.border.overflow-hidden.border-gray.rounded-lg.shadow-regular')
 
     print(f"Toplam {len(articles)} maç bulundu.")
 
-    # Her maç için bilgileri topla
     for i, article in enumerate(articles, 1):
         try:
-            # Maç linkini al
             a_tag = article.find_element(By.CSS_SELECTOR, 'a.absolute.w-full.h-full.top-0.left-0.z-\\[1\\]')
             match_link = a_tag.get_attribute('href')
 
-            # Maç başlığını al
             span_tag = article.find_element(By.CSS_SELECTOR, 'span.visually-hidden_wrap__Ob8t3')
             match_title = span_tag.text.strip()
 
             print(f"Maç {i}: {match_title}")
             print(f"Link: {match_link}")
 
-            # Her maç sayfasına git
             driver.execute_script("window.open('');")
             driver.switch_to.window(driver.window_handles[1])
             driver.get(match_link)
 
-            time.sleep(3)  # Sayfanın yüklenmesini bekle
+            time.sleep(3)
 
-            # Date bilgisini çek
             try:
                 date_element = driver.find_element(By.XPATH, '//*[@id="main"]/div/div/div[1]/div[1]/div/p')
                 date = date_element.text.strip()
@@ -139,17 +124,13 @@ try:
                 print(f"Tarih bulunamadı: {e}")
                 date = "N/A"
 
-            # Home ve Away takım bilgilerini çek
             try:
-                # İlk takım (genellikle home team)
                 team1_element = driver.find_element(By.XPATH, '//*[@id="main"]/div/div/div[1]/div[1]/a[1]/div/p[1]')
                 team1 = team1_element.text.strip()
 
-                # İkinci takım (genellikle away team)
                 team2_element = driver.find_element(By.XPATH, '//*[@id="main"]/div/div/div[1]/div[1]/a[2]/div/p[1]')
                 team2 = team2_element.text.strip()
 
-                # Fenerbahçe'nin hangi takım olduğunu kontrol et
                 if team_name in team1 or "FENERBAHCE" in team1.upper():
                     is_home = 1
                     opposing_team = team2
@@ -157,7 +138,6 @@ try:
                     is_home = 0
                     opposing_team = team1
                 else:
-                    # Eğer Fenerbahçe bulunamıyorsa, varsayılan olarak ilk takımı home kabul et
                     print(f"Uyarı: Fenerbahçe takımı tespit edilemedi. Takımlar: {team1} vs {team2}")
                     is_home = 1
                     opposing_team = team2
@@ -171,20 +151,17 @@ try:
             print(f"Rakip Takım: {opposing_team}")
             print(f"Ev Sahibi mi (1=Evet, 0=Hayır): {is_home}")
 
-            # Team Stats sayfasına geç
             try:
                 team_stats_button = driver.find_element(By.XPATH, '//*[@id="main"]/div/div/div[2]/div[1]/div/div/span[4]/a')
                 team_stats_button.click()
-                time.sleep(5)  # Team Stats sayfasının ve verilerinin yüklenmesini bekle
+                time.sleep(5)
                 print("Team Stats sayfasına geçildi")
             except Exception as e:
                 print(f"Team Stats sayfasına geçilemedi: {e}")
 
-            # İstatistikleri çek (sadeleştirilmiş yöntem)
             if is_home != "N/A":
                 stats = get_statistics_simple(driver, wait, is_home)
             else:
-                # IsHome bilgisi yoksa tüm istatistikleri N/A yap
                 stats = {}
                 for stat_name in statistics_names:
                     stats[stat_name] = "N/A"
@@ -212,13 +189,11 @@ try:
 
             print("-" * 50)
 
-            # Ana pencereye geri dön ve yeni pencereyi kapat
             driver.close()
             driver.switch_to.window(driver.window_handles[0])
 
         except Exception as e:
             print(f"Maç {i} için hata oluştu: {e}")
-            # Hata durumunda da ana pencereye dönmeye çalış
             try:
                 if len(driver.window_handles) > 1:
                     driver.close()
@@ -230,14 +205,11 @@ except Exception as e:
     print(f"Ana hata: {e}")
 
 finally:
-    # Tarayıcıyı kapat
     print("İşlem tamamlandı, tarayıcı kapatılıyor...")
     driver.quit()
 
-    # CSV dosyasının oluşturulduğunu kontrol et
     if os.path.exists(csv_filename):
         print(f"CSV dosyası başarıyla oluşturuldu: {csv_filename}")
-        # Dosyanın içeriğini kontrol et
         with open(csv_filename, 'r', encoding='utf-8') as csvfile:
             reader = csv.reader(csvfile)
             row_count = sum(1 for row in reader)
