@@ -1,0 +1,111 @@
+import requests
+from bs4 import BeautifulSoup
+import time
+import json
+import pandas as pd
+import os
+
+BASE_URL = "https://www.eurohoops.net/basket/fenerbahce/page/{}/?lang=tr"
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/142.0.0.0 Safari/537.36"
+}
+
+
+def scrape_eurohoops_bs(start_page, end_page, delay=1.0):
+
+    all_articles = []
+
+    for page in range(start_page, end_page + 1):
+        url = BASE_URL.format(page)
+        print(f"\n🔹 Sayfa {page} yükleniyor: {url}")
+
+        try:
+            resp = requests.get(url, headers=HEADERS, timeout=15)
+            resp.raise_for_status()
+        except requests.RequestException as e:
+            print(f"[Sayfa yüklenemedi: {e}]")
+            continue
+
+        soup = BeautifulSoup(resp.text, "html.parser")
+        articles = soup.find_all("article")
+
+        if not articles:
+            print("Bu sayfada hiç haber bulunamadı.")
+            continue
+
+        for idx, art in enumerate(articles, start=1 + (page - start_page) * 10):
+            try:
+                h2 = art.find("h2")
+                a_tag = h2.find("a")
+                title = a_tag.get_text(strip=True)
+                link = a_tag["href"]
+
+                try:
+                    news_resp = requests.get(link, headers=HEADERS, timeout=15)
+                    news_resp.raise_for_status()
+                except requests.RequestException as e:
+                    print(f"[Haber yüklenemedi: {title}] Hata: {e}")
+                    continue
+
+                news_soup = BeautifulSoup(news_resp.text, "html.parser")
+                content_div = news_soup.find("div", class_="single__content")
+                if not content_div:
+                    print(f"[Haber içeriği bulunamadı: {title}]")
+                    continue
+
+                paragraphs = content_div.find_all(
+                    ["p", "h1", "h2", "h3", "h4", "h5", "h6", "li"]
+                )
+                text = "\n".join(
+                    [p.get_text(strip=True) for p in paragraphs if p.get_text(strip=True)]
+                )
+
+                date_span = news_soup.select_one("span.single__date[itemprop='dateCreated']")
+                date_text = date_span.get_text(strip=True) if date_span else "Tarih bulunamadı"
+
+                print(f"{idx}. {title} (Haber uzunluğu: {len(text)} karakter)")
+
+                all_articles.append({
+                    "title": title,
+                    "text": text,
+                    "date": date_text
+                })
+
+                time.sleep(delay / 2)
+
+            except Exception as e:
+                print(f"[Haber işlenemedi: {e}]")
+                continue
+
+        time.sleep(delay)
+
+    # JSON ve CSV olarak kaydet
+    if all_articles:
+        json_dir = "Texts-JSON"
+        csv_dir = "Texts-CSV"
+
+        os.makedirs(json_dir, exist_ok=True)
+        os.makedirs(csv_dir, exist_ok=True)
+
+        json_name = os.path.join(json_dir, f"fenerbahce_news_{start_page}_{end_page}.json")
+        csv_name = os.path.join(csv_dir, f"fenerbahce_news_{start_page}_{end_page}.csv")
+
+        # JSON kaydet
+        with open(json_name, "w", encoding="utf-8") as f:
+            json.dump(all_articles, f, ensure_ascii=False, indent=4)
+        print(f"\n✅ JSON dosyası kaydedildi: {json_name}")
+
+        # CSV kaydet
+        df = pd.DataFrame(all_articles)
+        df.to_csv(csv_name, index=False, encoding="utf-8-sig")
+        print(f"✅ CSV dosyası kaydedildi: {csv_name}")
+
+    else:
+        print("Hiç haber metni kaydedilemedi.")
+
+
+if __name__ == "__main__":
+    # start_page ve end_page arasındaki haberleri çek
+    scrape_eurohoops_bs(start_page=1, end_page=1, delay=1.0)
