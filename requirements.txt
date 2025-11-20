@@ -1,0 +1,6 @@
+requests
+beautifulsoup4
+time
+pandas
+selenium
+webdriver-manager
