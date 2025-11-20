@@ -11,10 +11,10 @@ Fenerbahçe Beko basketbol takımıyla ilgili haber ve istatistik verilerini top
 ## Dosya Açıklamaları
 - **ScrapingText.py**: Fenerbahçe Beko ile ilgili haberleri web sitelerinden çekmek için kullanılan Python betiği.
 - **ScrapingStatistics.py**: Takımın sezonluk istatistiklerini web sitelerinden çekmek için kullanılan Python betiği.
-- **DataVisualization.ipynb**: Verilerin görselleştirilmesi için kullanılan Jupyter Notebook dosyası. Grafikler ve analizler içerir.
-- **TextVisualization.ipynb**: Metin verilerinin görselleştirilmesi ve analiz edilmesi için kullanılan Jupyter Notebook dosyası.
-- **DataPreprocessing.ipynb**: Veri temizleme ve ön işleme adımlarını içeren Jupyter Notebook dosyası.
-- **TextPreprocessing.ipynb**: Metin verilerinin temizlenmesi ve ön işlenmesi için kullanılan Jupyter Notebook dosyası.
+- **DataVisualization.ipynb**: Verilerin görselleştirilmesi için kullanılan Notebook dosyası. Grafikler ve analizler içerir.
+- **TextVisualization.ipynb**: Metin verilerinin görselleştirilmesi ve analiz edilmesi için kullanılan Notebook dosyası.
+- **DataPreprocessing.ipynb**: Veri temizleme ve ön işleme adımlarını içeren Notebook dosyası.
+- **TextPreprocessing.ipynb**: Metin verilerinin temizlenmesi ve ön işlenmesi için kullanılan Notebook dosyası.
 
 ## Kurulum
 Projeyi yerel makinenize kurmak için şu adımları izleyin:
