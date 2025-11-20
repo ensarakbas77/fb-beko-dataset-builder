@@ -1,4 +1,4 @@
-# Fenerbahçe Beko Dataset Builder
+# Veri Seti Hazırlama
 
 ## Proje Hakkında
 Fenerbahçe Beko basketbol takımıyla ilgili haber ve istatistik verilerini toplamak için geliştirilmiş bir projedir. Veriler, **EuroLeague** ve **Eurohoops** web sitelerinden otomatik olarak çekilmektedir. Bu proje, veri analizi, görselleştirme ve makine öğrenimi gibi çeşitli uygulamalar için zengin bir veri seti sunar.
@@ -7,6 +7,14 @@ Fenerbahçe Beko basketbol takımıyla ilgili haber ve istatistik verilerini top
 - **Haber Verileri**: Fenerbahçe Beko ile ilgili haberler JSON ve CSV formatlarında kaydedilir.
 - **İstatistik Verileri**: Takımın sezonluk performans istatistikleri CSV formatında saklanır.
 - **Kolay Kullanım**: Veri çekme işlemleri otomatikleştirilmiştir ve kolayca çalıştırılabilir.
+
+## Dosya Açıklamaları
+- **ScrapingText.py**: Fenerbahçe Beko ile ilgili haberleri web sitelerinden çekmek için kullanılan Python betiği.
+- **ScrapingStatistics.py**: Takımın sezonluk istatistiklerini web sitelerinden çekmek için kullanılan Python betiği.
+- **DataVisualization.ipynb**: Verilerin görselleştirilmesi için kullanılan Jupyter Notebook dosyası. Grafikler ve analizler içerir.
+- **TextVisualization.ipynb**: Metin verilerinin görselleştirilmesi ve analiz edilmesi için kullanılan Jupyter Notebook dosyası.
+- **DataPreprocessing.ipynb**: Veri temizleme ve ön işleme adımlarını içeren Jupyter Notebook dosyası.
+- **TextPreprocessing.ipynb**: Metin verilerinin temizlenmesi ve ön işlenmesi için kullanılan Jupyter Notebook dosyası.
 
 ## Kurulum
 Projeyi yerel makinenize kurmak için şu adımları izleyin:
@@ -51,14 +59,6 @@ Takımın sezonluk istatistiklerini çekmek için şu komutu çalıştırın:
 python ScrapingStatistics.py
 ```
 Bu işlem, istatistikleri CSV formatında kaydedecektir.
-
-## Dosya Açıklamaları
-- **ScrapingText.py**: Fenerbahçe Beko ile ilgili haberleri web sitelerinden çekmek için kullanılan Python betiği.
-- **ScrapingStatistics.py**: Takımın sezonluk istatistiklerini çekmek için kullanılan Python betiği.
-- **DataVisualization.ipynb**: Verilerin görselleştirilmesi için kullanılan Jupyter Notebook dosyası. Grafikler ve analizler içerir.
-- **TextVisualization.ipynb**: Metin verilerinin görselleştirilmesi ve analiz edilmesi için kullanılan Jupyter Notebook dosyası.
-- **DataPreprocessing.ipynb**: Veri temizleme ve ön işleme adımlarını içeren Jupyter Notebook dosyası.
-- **TextPreprocessing.ipynb**: Metin verilerinin temizlenmesi ve ön işlenmesi için kullanılan Jupyter Notebook dosyası.
 
 ## Veri Seti
 Toplanan veriler aşağıdaki dizinlerde saklanır:
